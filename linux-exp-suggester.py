@@ -8,6 +8,7 @@ import urllib
 import platform
 from optparse import OptionParser
 
+
 h00lyshit = {
     'Name': 'h00lyshit',
     'Kernel': [
@@ -27,9 +28,49 @@ krad3 = {
     'Kernel': ['2.6.5', '2.6.7', '2.6.8', '2.6.9', '2.6.10', '2.6.11'],
     'Source': 'http://exploit-db.com/exploits/1397/',
 }
+w00t = {
+    'Name': 'w00t',
+    'Kernel': ['2.4.10', '2.4.16', '2.4.17', '2.4.18', '2.4.19', '2.4.20', '2.4.21'],
+    'Source': '',
+}
+brk = {
+    'Name': 'brk',
+    'Kernel': ['2.4.10', '2.4.18', '2.4.19', '2.4.20', '2.4.21', '2.4.22'],
+    'Source': '',
+}
+elfdump = {
+    'Name': 'elfdump',
+    'Kernel': ['2.4.27'],
+    'Source': '',
+}
+elfcd = {
+    'Name': 'elfcd',
+    'Kernel': ['2.6.12'],
+    'Source': '',
+}
+expand_stack = {
+    'Name': 'expand_stack',
+    'Kernel': ['2.4.29'],
+    'Source': '',
+}
+kdump = {
+    'Name': 'kdump',
+    'Kernel': ['2.6.13'],
+    'Source': '',
 
-exploits = [h00lyshit, elflbl, krad3]
+}
+km2 = {
+    'Name': 'km2',
+    'Kernel': ['2.4.18', '2.4.22'],
+    'Source': '',
+}
+krad = {
+    'Name': 'krad',
+    'Kernel': ['2.6.5', '2.6.7', '2.6.8', '2.6.9', '2.6.10', '2.6.11'],
+    'Source': '',
+}
 
+exploits = [h00lyshit, elflbl, krad, krad3, w00t, elfdump, brk, elfcd, expand_stack, kdump, km2]
 
 def get_exploits(kernel_version, is_partial, is_download):
     prog = re.compile(kernel_version)
@@ -55,7 +96,7 @@ def download_exp(url, name, kernel_version):
         filename = add_suffix(name)
         shutil.move(filename, dir_name)
     except Exception, e:
-        print '[-] Download {name}:{url}'.format(name=name, url=down_url)
+        print '[-] Download {name} failed'.format(name=name)
 
 
 def add_suffix(file):
