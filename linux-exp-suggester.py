@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import re
+import shutil
+import urllib
 import platform
+import shutil
 from optparse import OptionParser
 
 h00lyshit = {
@@ -27,18 +31,37 @@ krad3 = {
 exploits = [h00lyshit, elflbl, krad3]
 
 
-def get_exploits(kernel_version, is_partial):
+def get_exploits(kernel_version, is_partial, is_download):
     prog = re.compile(kernel_version)
     for exploit in exploits:
         if prog.search(str(exploit['Kernel'])):
-            print '[+] {name}'.format(name=exploit['Name'])
+            print '[+] ' + exploit['Name']
             print_exploit(exploit)
+            if is_download:
+                url = exploit['Source']
+                download_exp(url, exploit['Name'], kernel_version)
+               
+
+def download_exp(url, name, kernel_version):
+    if 'exploit-db' in url:
+        down_url = url.replace('exploits', 'download')
+    else:
+        down_url = url
+
+    if not os.path.exists(kernel_version):
+        os.makedirs(kernel_version)
+    try:
+        urllib.urlretrieve(down_url, name)
+        shutil.move(name, kernel_version)
+    except Exception,e:
+        print '[-] Download {name}:{url}'.format(name=name, url=down_url)
+
 
 
 def print_exploit(exploit):
     for _ in exploit:
         if _ != 'Name':
-            print '    {key}: {values}'.format(key=_, values=str(exploit[_]))
+            print '    ' + _ + ':  ' + str(exploit[_])
 
 
 def get_kernel_version():
@@ -55,7 +78,9 @@ def get_kernel_version():
 def main():
     parser = OptionParser()
     parser.add_option("-k", "--kernel_version",
-                      dest="kernel_version", help="kernel version number eg. 2.6.8 or eg. 2.6")
+                      dest="kernel_version", help="kernel version number eg.2.6.8")
+    parser.add_option("--download",
+                      action="store_true", dest="is_download", default=False, help="download match exploits")
     (options, args) = parser.parse_args()
     if options.kernel_version:
         kernel_version = options.kernel_version
@@ -66,9 +91,9 @@ def main():
     else:
         is_partial = True
 
-    print '[*] Search kernel version {kernel_version}'.format(kernel_version=kernel_version)
-    print '[*] Possible exploits:\n' 
-    get_exploits(kernel_version, is_partial)
+    print kernel_version
+    print
+    get_exploits(kernel_version, is_partial, options.is_download)
 
 if __name__ == "__main__":
     main()
