@@ -5,7 +5,6 @@ import re
 import shutil
 import urllib
 import platform
-import shutil
 from optparse import OptionParser
 
 h00lyshit = {
@@ -40,22 +39,39 @@ def get_exploits(kernel_version, is_partial, is_download):
             if is_download:
                 url = exploit['Source']
                 download_exp(url, exploit['Name'], kernel_version)
-               
+
 
 def download_exp(url, name, kernel_version):
     if 'exploit-db' in url:
         down_url = url.replace('exploits', 'download')
     else:
         down_url = url
-
-    if not os.path.exists(kernel_version):
-        os.makedirs(kernel_version)
+    dir_name = 'exploits_' + kernel_version
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
     try:
         urllib.urlretrieve(down_url, name)
-        shutil.move(name, kernel_version)
-    except Exception,e:
+        filename = add_suffix(name)
+        shutil.move(filename, dir_name)
+    except Exception, e:
         print '[-] Download {name}:{url}'.format(name=name, url=down_url)
 
+
+def add_suffix(file):
+    suffix = file_type(file)
+    filename = file + suffix
+    shutil.move(file, filename)
+    return filename
+
+
+def file_type(path):
+    content = file(path).read()
+    if 'stdio.h' in content:
+        suffix = '.c'
+    else:
+        suffix = ''
+
+    return suffix
 
 
 def print_exploit(exploit):
