@@ -55,7 +55,7 @@ def get_kernel_version():
 def main():
     parser = OptionParser()
     parser.add_option("-k", "--kernel_version",
-                      dest="kernel_version", help="kernel version number eg.2.6.8")
+                      dest="kernel_version", help="kernel version number eg. 2.6.8 or eg. 2.6")
     (options, args) = parser.parse_args()
     if options.kernel_version:
         kernel_version = options.kernel_version

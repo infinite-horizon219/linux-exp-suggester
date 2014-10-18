@@ -2,6 +2,14 @@ linux-exp-suggester
 --------
 linux exploits suggester
 
+## Usage
+
+    linux-exp-suggester.py [options]
+
+    Options:
+    -h, --help            show this help message and exit
+    -k KERNEL_VERSION, --kernel_version=KERNEL_VERSION kernel version number eg. 2.6.8 or eg. 2.6
+
 ## Example
 
     python linux-exp-suggester.py -k 2.6
