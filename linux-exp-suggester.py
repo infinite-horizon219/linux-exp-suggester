@@ -31,14 +31,14 @@ def get_exploits(kernel_version, is_partial):
     prog = re.compile(kernel_version)
     for exploit in exploits:
         if prog.search(str(exploit['Kernel'])):
-            print '[+] ' + exploit['Name']
+            print '[+] {name}'.format(name=exploit['Name'])
             print_exploit(exploit)
 
 
 def print_exploit(exploit):
     for _ in exploit:
         if _ != 'Name':
-            print '    ' + _ + ':  ' + str(exploit[_])
+            print '    {key}: {values}'.format(key=_, values=str(exploit[_]))
 
 
 def get_kernel_version():
@@ -66,8 +66,8 @@ def main():
     else:
         is_partial = True
 
-    print kernel_version
-    print
+    print '[*] Search kernel version {kernel_version}'.format(kernel_version=kernel_version)
+    print '[*] Possible exploits:\n' 
     get_exploits(kernel_version, is_partial)
 
 if __name__ == "__main__":
