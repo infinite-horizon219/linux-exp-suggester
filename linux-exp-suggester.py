@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import sys
 import shutil
 import urllib
 import platform
@@ -68,9 +69,12 @@ def file_type(path):
     content = file(path).read()
     if 'stdio.h' in content:
         suffix = '.c'
+    elif 'python' in content:
+        suffix = '.py'
+    elif 'perl' in content:
+        suffix = '.pl'
     else:
         suffix = ''
-
     return suffix
 
 
@@ -87,7 +91,8 @@ def get_kernel_version():
         kernel_version = uname[2]
     else:
         kernel_version = ''
-        print '[-] local system is {system}!'.format(system=system)
+        print '[-] local system is {system}!, please use -k'.format(system=system)
+        sys.exit(0)
     return kernel_version
 
 
