@@ -1,41 +1,44 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 import platform
 from optparse import OptionParser
 
 h00lyshit = {
-    'name': 'h00lyshit',
-    'vuln': [
+    'Name': 'h00lyshit',
+    'Kernel': [
         '2.6.8',  '2.6.10', '2.6.11', '2.6.12',
         '2.6.13', '2.6.14', '2.6.15', '2.6.16',
     ],
-    'cve': '2006-3626',
-    'refer': 'http://www.exploit-db.com/exploits/2013/',
+    'CVE': '2006-3626',
+    'Source': 'http://www.exploit-db.com/exploits/2013/',
 }
 elflbl = {
-    'name': 'elflbl',
-    'vuln': ['2.4.29'],
-    'mil': 'http://www.exploit-db.com/exploits/744/',
+    'Name': 'elflbl',
+    'Kernel': ['2.4.29'],
+    'Source': 'http://www.exploit-db.com/exploits/744/',
 }
 krad3 = {
-    'name': 'krad3',
-    'vuln': ['2.6.5', '2.6.7', '2.6.8', '2.6.9', '2.6.10', '2.6.11'],
-    'mil': 'http://exploit-db.com/exploits/1397',
+    'Name': 'krad3',
+    'Kernel': ['2.6.5', '2.6.7', '2.6.8', '2.6.9', '2.6.10', '2.6.11'],
+    'Source': 'http://exploit-db.com/exploits/1397/',
 }
 
 exploits = [h00lyshit, elflbl, krad3]
 
 
-def get_exploits(kernel_version):
+def get_exploits(kernel_version, is_partial):
+    prog = re.compile(kernel_version)
     for exploit in exploits:
-        if kernel_version in exploit['vuln']:
+        if prog.search(str(exploit['Kernel'])):
+            print '[+] ' + exploit['Name']
             print_exploit(exploit)
-            print
 
 
 def print_exploit(exploit):
     for _ in exploit:
-        print _ + ':  ' + str(exploit[_])
+        if _ != 'Name':
+            print '    ' + _ + ':  ' + str(exploit[_])
 
 
 def get_kernel_version():
@@ -58,9 +61,14 @@ def main():
         kernel_version = options.kernel_version
     else:
         kernel_version = get_kernel_version()
+    if re.match('\d+\.\d+\.\d+', kernel_version):
+        is_partial = False
+    else:
+        is_partial = True
+
     print kernel_version
     print
-    get_exploits(kernel_version)
+    get_exploits(kernel_version, is_partial)
 
 if __name__ == "__main__":
     main()
