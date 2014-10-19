@@ -374,11 +374,15 @@ exploits = [
 ]
 
 
-def get_exploits(kernel_version, is_partial, is_download):
+def get_exploits(kernel_version, is_partial, is_download, exp_name):
     prog = re.compile(kernel_version)
+    if exp_name:
+        for exploit in exploits:
+            if exploit['Name'] == exp_name:
+                print_exploit(exploit)
+                return
     for exploit in exploits:
         if prog.search(str(exploit['Kernel'])):
-            print '[+] ' + exploit['Name']
             print_exploit(exploit)
             if is_download:
                 url = exploit['Source']
@@ -422,9 +426,10 @@ def file_type(path):
 
 
 def print_exploit(exploit):
+    print '[+] ' + exploit['Name']
     for _ in exploit:
         if _ != 'Name':
-            print '    ' + _ + ':  ' + str(exploit[_])
+            print '    {exp}:  {content}'.format(exp=_, content=exploit[_])
 
 
 def get_kernel_version():
@@ -434,7 +439,7 @@ def get_kernel_version():
         kernel_version = uname[2]
     else:
         kernel_version = ''
-        print '[-] local system is {system}!, please use -k'.format(system=system)
+        print '[-] local system is {system}!, please use -k or -n'.format(system=system)
         sys.exit(0)
     return kernel_version
 
@@ -442,22 +447,33 @@ def get_kernel_version():
 def main():
     parser = OptionParser()
     parser.add_option("-k", "--kernel_version",
-                      dest="kernel_version", help="kernel version number eg.2.6.8")
+                      dest="kernel_version", help="kernel version number eg.2.6.8 or eg.2.6")
     parser.add_option("--download",
                       action="store_true", dest="is_download", default=False, help="download match exploits")
+    parser.add_option("-n", "--name",
+                      dest="exp_name", default="", help="Exploit name eg. h00lyshit")
     (options, args) = parser.parse_args()
-    if options.kernel_version:
+    exp_name = options.exp_name
+
+    if options.exp_name:
+        kernel_version = ''
+    elif options.kernel_version:
         kernel_version = options.kernel_version
     else:
         kernel_version = get_kernel_version()
+
     if re.match('\d+\.\d+\.\d+', kernel_version):
         is_partial = False
     else:
         is_partial = True
 
-    print kernel_version
-    print
-    get_exploits(kernel_version, is_partial, options.is_download)
+    if kernel_version:
+        print '[*] Search Kernel {kernel}'.format(kernel=kernel_version)
+    else:
+        print '[*] Search Exploit {name}'.format(name=exp_name)
+    print 
+
+    get_exploits(kernel_version, is_partial, options.is_download, exp_name)
 
 if __name__ == "__main__":
     main()
