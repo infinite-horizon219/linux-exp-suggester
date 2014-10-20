@@ -375,7 +375,11 @@ exploits = [
 
 
 def get_exploits(kernel_version, is_partial, is_download, exp_name):
-    prog = re.compile(kernel_version)
+    if is_partial:
+        regex = kernel_version + r'\.\d+'
+    else:
+        regex = kernel_version
+    prog = re.compile(regex)
     if exp_name:
         for exploit in exploits:
             if exploit['Name'] == exp_name:
@@ -466,6 +470,8 @@ def main():
         is_partial = False
     else:
         is_partial = True
+        if kernel_version[-1] == '.':
+            kernel_version = kernel_version[:-1]
 
     if kernel_version:
         print '[*] Search Kernel {kernel}'.format(kernel=kernel_version)
